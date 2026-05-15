@@ -16,6 +16,7 @@
 > **Python 版本：** 3.13  
 > _MIT License_
 
+软件下载地址：https://pan.quark.cn/s/ddf0e5946b5c
 # 🫵应用介绍   
 
 是的，朋友，我知道连接校园网只需要用手点一下按钮就可以了
