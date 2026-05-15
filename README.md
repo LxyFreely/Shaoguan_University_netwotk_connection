@@ -1,17 +1,24 @@
+<div align="center">
+
 # 韶关学院校园网自动连接系统
 
 --------------
+
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://python.org)
 [![Stars](https://img.shields.io/github/stars/ZX-RAY1124/Shaoguan_University_netwotk_connection)](https://github.com/ZX-RAY1124/Shaoguan_University_netwotk_connection)
 
+</div>
 
 > 本脚本由化土学院 ZX_RAYER 制作  
 > **使用库：** `selenium` `os` `sys`  
 > **Python 版本：** 3.13  
 > _MIT License_
+
 # 🫵应用介绍   
-是的，朋友，我知道连接校园网只需要用手点一下按钮就可以了  
+
+是的，朋友，我知道连接校园网只需要用手点一下按钮就可以了
 
 **但是……**
 
