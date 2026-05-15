@@ -1,0 +1,2 @@
+# Shaoguan_University_netwotk_connection
+供韶院同学自动连接校园网
