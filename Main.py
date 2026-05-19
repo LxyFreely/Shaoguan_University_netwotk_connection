@@ -9,8 +9,21 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from tkinter import messagebox
 
+import pystray
+from pystray import MenuItem as item
+from PIL import Image,ImageDraw
+
+
 options = webdriver.EdgeOptions()
 driver = webdriver.Edge(options=options)
+
+
+def create_icom_image():
+    img=Image.new('RGB',(32,32))
+    draw=ImageDraw.Draw(img)
+    draw.rectangle((0,0,32,32),fill=(255,0,0))
+    return img
+
 
 
 def main():
@@ -120,5 +133,34 @@ def get_file_dir(file=''):
     else:
         return os.path.join(os.path.dirname(os.path.abspath(__file__)),file)
 
+def registry():
+    pass
+
+def unregistry():
+    pass
+
+def detectopen():
+    pass
+
+def detectclose():
+    pass
+
+
+menu=pystray.Menu(
+    item('退出',lambda:icon.stop()),
+    item('登录',lambda:main()),
+    item('开启开机启动',lambda:registry()),
+    item('关闭开机启动',lambda:unregistry()),
+    item('开启网络检测',lambda:detectopen()),
+    item('关闭网络检测',lambda:detectclose())
+)
+
+
 if __name__ == '__main__':
+    icon=pystray.Icon(
+        name='Campus_network_connection',
+        icon=create_icom_image(),
+        title='校园网连接助手',
+        menu=menu,
+    )
     main()
