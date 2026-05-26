@@ -2083,6 +2083,8 @@ function visitorGetPass() {
     });
 }
 
+
+
 function vistorLoginSubmit() {
     if ($(portalconfig.vistorpasswd).val() == "") {
         _alert("请输入验证码");
