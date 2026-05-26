@@ -24,6 +24,16 @@ def create_icom_image():
     draw.rectangle((0,0,32,32),fill=(255,0,0))
     return img
 
+def make_sub():
+    icon = Image.open('icon.png').resize((32, 32))
+    menu = pystray.Menu(
+        pystray.MenuItem('打开配置文件', lambda: os.startfile('properties.prop')),
+        pystray.MenuItem('创建计时任务', lambda : threading.Thread(target=lambda : print('')).start()),
+        pystray.MenuItem('退出程序', lambda: sub.stop())
+    )
+    sub = pystray.Icon('sub_level', icon, menu=menu)
+
+    sub.run_detached()
 
 
 def main():
