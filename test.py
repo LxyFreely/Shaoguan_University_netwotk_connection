@@ -1,3 +1,5 @@
-import os
+import requests
 
-print(os.path.dirname(os.path.abspath(__file__)))
+url = "http://2.2.2.2"
+res = requests.get(url)
+print(res.url)
