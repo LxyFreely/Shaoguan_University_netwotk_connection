@@ -7,8 +7,7 @@ import sys
 from tkinter import messagebox
 
 import pystray
-from pystray import MenuItem as item
-from PIL import Image,ImageDraw
+from PIL import Image
 
 
 import pannal
