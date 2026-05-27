@@ -1,5 +1,4 @@
 import os.path
-import time
 import os
 import threading
 import winreg
