@@ -78,14 +78,8 @@ def login(username, password):
         sf = config["serverForm"]
         pf = config["portalForm"]
 
-        confignormallist={"authByRas": False,"dropMacAuth": False}
+        confignormallist={"authByRas": False}
         pcnormallist={
-            "list2Auth": "0",
-            "listOauthFlag": "0",
-            "listbindmac": "0",
-            "listfreeauth": "0",
-            "listgetpass": "0",
-            "listpasscode": "0",
             "listqqauth": "0",
             "listwbauth": "0",
             "listwxauth": "0",
@@ -94,7 +88,7 @@ def login(username, password):
         #判断config和pc中的部分值是否和上面字典的一样，如果不一样就是太老了
         old=False
         for k,v in confignormallist.items():
-            if pc.get(k) != v:
+            if config.get(k) != v:
                 old=True
                 break
         for k,v in pcnormallist.items():
