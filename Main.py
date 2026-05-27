@@ -1,5 +1,4 @@
 import os.path
-import time
 import os
 import threading
 import winreg
@@ -80,6 +79,8 @@ def main():
         ans = []
         for line in identify:
             ans.append(line.strip('\n').split("="))
+        dir_app = get_file_dir('make_connection.exe')
+        print(dir_app)
 
 
     except Exception as e:
@@ -146,8 +147,10 @@ def get_file_dir(file=''):
     if getattr(sys, 'frozen', False):
         return os.path.join(os.path.dirname(sys.executable),file)
     else:
-        return os.path.join(os.path.dirname(os.path.abspath(__file__)),file)
-
+        try:
+            return os.path.join(os.path.dirname(os.path.abspath(__file__)),file)
+        except:
+            return os.path.join(os.getcwd(),file)
 
 
 
