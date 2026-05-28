@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>校园网，通往每一种生活</title>
+    <style>
+        /* --- 基础重置 --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            display: flex;
+            height: 100vh; /* 占满整个视口高度 */
+            background-color: #f4f6f9;
+            color: #333;
+        }
+
+        /* --- 左侧菜单栏样式 --- */
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50; /* 深色背景 */
+            color: #ecf0f1;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0; /* 防止被压缩 */
+        }
+
+        .sidebar-title {
+            padding: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            border-bottom: 1px solid #34495e;
+            background-color: #1a252f;
+        }
+
+        .menu {
+            list-style: none;
+            margin-top: 10px;
+        }
+
+        .menu-item {
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+            border-left: 4px solid transparent;
+        }
+
+        .menu-item:hover {
+            background-color: #34495e;
+        }
+
+        /* 菜单激活状态 */
+        .menu-item.active {
+            background-color: #34495e;
+            border-left-color: #3498db; /* 蓝色高亮条 */
+            color: #3498db;
+        }
+
+        /* --- 右侧内容区域样式 --- */
+        .main-content {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto; /* 内容过多时滚动 */
+        }
+
+
+
+        /* 默认隐藏所有内容面板 */
+        .content-panel {
+            display: none;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            max-width: 500px;
+            margin: 0 auto ; /* 居中显示 */
+        }
+
+        /* 显示激活的面板 */
+        .content-panel.active {
+            display: block;
+        }
+
+
+
+        .panel-title {
+            margin-bottom: 25px;
+            font-size: 24px;
+            color: #2c3e50;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        /* --- 登录表单样式 --- */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: #3498db;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .checkbox-group input {
+            margin-right: 8px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-bottom: 10px;
+        }
+        .sure-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: none;
+
+        }
+
+        .sure-btn.active{
+            display: block;
+        }
+
+        .submit-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .sure-btm:hover {
+            background-color: #1f2e3a;
+        }
+
+        /* 定时设置留空的提示文字 */
+        .empty-placeholder {
+            color: #1f2e3a;
+            text-align: center;
+            margin-top:10px;
+        }
+        .time-planer-button {
+            margin-top: 10px;
+            border-radius: 30px;
+            border-color: #1a252f;
+            background-color: #f4f6f9;
+            color: #1a252f;
+            font-size: 15px;
+            height: 40px;
+            display: inline-block;
+            padding: 0 10px;
+
+        }
+        .del-planer-button {
+            margin-top: 10px;
+            border-radius: 30px;
+            border-color: #810808;
+            background-color: #f4f6f9;
+            color: #810808;
+            font-size: 15px;
+            height: 40px;
+            display: none;
+            padding: 0 10px;
+        }
+        .del-planer-button.active {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 左侧菜单栏 -->
+<nav class="sidebar">
+    <div class="sidebar-title">校园网自动连接系统</div>
+    <ul class="menu">
+        <!-- 添加 onclick 事件用于切换内容 -->
+        <li class="menu-item active" onclick="switchTab('system-config', this)">系统配置</li>
+        <li class="menu-item" onclick="switchTab('timer-settings', this)">定时设置</li>
+    </ul>
+</nav>
+
+<!-- 右侧主内容区 -->
+<main class="main-content" id="main-content">
+
+    <!-- 系统配置面板 (默认显示) -->
+    <div id="system-config" class="content-panel active">
+        <h2 class="panel-title">系统登录配置</h2>
+
+            <div class="form-group">
+                <label for="username">账号</label>
+                <input type="text" id="username" name="username" placeholder="请输入校园网账号" required>
+            </div>
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" name="password" placeholder="请输入密码" required>
+            </div>
+            <!--
+            <div class="checkbox-group">
+                <input type="checkbox" id="remember" name="remember">
+                <label for="remember" style="margin-bottom: 0; font-weight: normal;">保存配置到本地</label>
+            </div>
+            -->
+
+            <button type="submit" class="submit-btn">保存配置</button>
+            <button type="submit" class="sure-btn active" id="login" onclick="onLoginOrOutButtonClick()">手动登录校园网</button>
+            <button type="submit" class="sure-btn" id="logout" onclick="onLoginOrOutButtonClick()">退出登录</button>
+    </div>
+
+    <!-- 定时设置面板 (默认隐藏) -->
+    <div id="timer-settings" class="content-panel">
+        <h2 class="panel-title">定时设置</h2>
+        <div class="empty-placeholder">
+            <p>计时任务可以让您在任何时候想登录校园网就自动登录上喵</p>
+            <button class="time-planer-button", id="creater">创建计时任务</button>
+            <button class="del-planer-button", id="del-button">删除所有</button>
+        </div>
+    </div>
+
+</main>
+
+<script>
+
+    const createbutton = document.getElementById('creater');
+
+    createbutton.addEventListener('click', () => {
+        onCreateTimeEventClick()
+    });
+
+
+    // 简单的标签页切换逻辑
+    function switchTab(panelId, menuItem) {
+        // 1. 隐藏所有内容面板
+        const panels = document.querySelectorAll('.content-panel');
+        panels.forEach(panel => panel.classList.remove('active'));
+
+        // 2. 移除所有菜单项的激活状态
+        const menuItems = document.querySelectorAll('.menu-item');
+        menuItems.forEach(item => item.classList.remove('active'));
+
+        // 3. 显示目标面板
+        document.getElementById(panelId).classList.add('active');
+
+
+
+        // 4. 激活当前点击的菜单项
+        menuItem.classList.add('active');
+    }
+
+    function onLoginOrOutButtonClick(){
+
+
+
+
+        const enterbutton = document.getElementById('login');
+        const closebutton = document.getElementById('logout');
+
+        if(enterbutton.classList.contains('active')){
+            enterbutton.classList.remove('active')
+            closebutton.classList.add('active');
+        } else {
+            closebutton.classList.remove('active')
+            enterbutton.classList.add('active');
+
+        }
+
+    }
+
+    function onCreateTimeEventClick(){
+        const delbutton = document.getElementById('del-button');
+        delbutton.classList.add('active');
+        const new_button = document.createElement('button');
+        document.getElementById('main-content').appendChild(new_button);
+
+    }
+</script>
+</body>
+</html>
