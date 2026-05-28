@@ -89,6 +89,7 @@ def login(username, password):
         old=False
         for k,v in confignormallist.items():
             if config.get(k) != v:
+                print("config的kv错误")
                 old=True
                 break
         for k,v in pcnormallist.items():
@@ -173,6 +174,76 @@ def _fetch_portal_info():
             raise Exception(f"参数缺失: {k}")
     net_params = {k: params[k][0] for k in needed}
     return base_url, net_params
+
+
+def logout():
+    """
+    下线当前设备（不依赖本地缓存）
+    返回 True 表示下线成功，否则抛出异常
+    """
+    # 1. 确认当前已登录，并获取重定向 URL（包含 username 等）
+    resp = requests.get("http://2.2.2.2", allow_redirects=False, timeout=5)
+    if resp.status_code not in (301, 302, 303, 307, 308):
+        raise Exception("当前似乎未登录，无需下线")
+    
+    location = resp.headers.get("Location", "")
+    if not location:
+        raise Exception("无法获取下线重定向地址")
+    
+    parsed = urlparse(location)
+    base_url = urlunparse((parsed.scheme, parsed.netloc, '', '', '', ''))
+    loc_params = parse_qs(parsed.query)
+    
+    # 提取必要参数
+    if "wlanuserip" not in loc_params or "wlanacname" not in loc_params:
+        raise Exception("重定向地址缺少必要网络参数")
+    
+    wlanuserip = loc_params["wlanuserip"][0]
+    wlanacname = loc_params["wlanacname"][0]
+    username = loc_params.get("username", [""])[0]  # 账号
+    # vlan 可能也需要（但不是下线必填）
+    vlan = loc_params.get("vlan", [""])[0]
+    
+    # 2. 获取下线配置（viewStatus=2），拿到 serverip 和 version
+    session = requests.Session()
+    config_params = {
+        "wlanuserip": wlanuserip,
+        "wlanacname": wlanacname,
+        "vlan": vlan,
+        "rand": str(int(time.time() * 1000)),
+        "viewStatus": "2"
+    }
+    resp = session.get(f"{base_url}/PortalJsonAction.do", params=config_params)
+    if resp.status_code != 200:
+        raise Exception(f"获取下线配置失败: {resp.status_code}")
+    
+    config = resp.json()
+    server_form = config.get("serverForm", {})
+    portal_form = config.get("portalForm", {})
+    
+    # 3. 构造下线参数（参考 JS disconnSubmit）
+    logout_params = {
+        "wlanacip": server_form.get("serverip", ""),
+        "wlanuserip": portal_form.get("wlanuserip", wlanuserip),
+        "wlanacname": portal_form.get("wlanacname", wlanacname),
+        "mac": portal_form.get("mac", ""),          # 大多数情况为空也可以
+        "version": server_form.get("portalVer", 0),
+        "portaltype": "0",
+        "userid": username,
+        "groupId": config.get("groupId", ""),       # 配置里可能没有，留空
+        "clearOperator": "0"
+    }
+    
+    # 4. 发送下线请求
+    resp = session.post(f"{base_url}/quickauthdisconn.do", data=logout_params)
+    result = resp.json()
+    if result.get("code") == "0":
+        print("下线成功")
+        return True
+    else:
+        raise Exception(f"下线失败: {result.get('message', result)}")
+
+
 
 # ================= 直接运行入口 =================
 
