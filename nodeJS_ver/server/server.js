@@ -27,6 +27,12 @@ class server {
             console.log('>> Server is closed');
         })
     }
+
+
+    get_data(){
+
+    }
+
 }
 
 module.exports = server;

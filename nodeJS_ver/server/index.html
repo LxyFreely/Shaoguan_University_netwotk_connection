@@ -75,11 +75,11 @@
         .content-panel {
             display: none;
             background-color: #fff;
-            padding: 30px;
+            padding:  30px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             max-width: 500px;
-            margin: 0 auto ; /* 居中显示 */
+            margin: 10px auto ; /* 居中显示 */
         }
 
         /* 显示激活的面板 */
@@ -168,15 +168,15 @@
             background-color: #2980b9;
         }
 
-        .sure-btm:hover {
+        .sure-btn:hover {
             background-color: #1f2e3a;
         }
 
         /* 定时设置留空的提示文字 */
         .empty-placeholder {
             color: #1f2e3a;
-            text-align: center;
-            margin-top:10px;
+            margin-top:5px;
+            font-size: 13px;
         }
         .time-planer-button {
             margin-top: 10px;
@@ -204,6 +204,40 @@
         .del-planer-button.active {
             display: inline-block;
         }
+        .top-banner {
+            border-width: 10px 10px ;
+            margin: 0 30% ;
+            align-content: center;
+            padding: 0 40px;
+            height: 40px;
+            color: #1b5a1b;
+            background-color: #6ebc6e;
+            border-radius: 10px;
+            display: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-size: 15px;
+            font-weight: bold;
+            border-color: #1b5a1b;
+            z-index: 1000;    /*保证在最上层*/
+            transform: translateY(-200%);
+            transition: transform 0.4s ease-in-out;
+
+        }
+        .top-banner.online{
+            background-color: #1f2e3a;
+            color: #fafafd;
+
+        }
+
+        .top-banner.show{
+            transform: translateY(-200%);
+            display: inline-block;
+        }
+        .top-banner.move {
+            transform: translateY(0);
+        }
+
+
     </style>
 </head>
 <body>
@@ -215,11 +249,26 @@
         <!-- 添加 onclick 事件用于切换内容 -->
         <li class="menu-item active" onclick="switchTab('system-config', this)">系统配置</li>
         <li class="menu-item" onclick="switchTab('timer-settings', this)">定时设置</li>
+        <li class="menu-item" onclick="switchTab('name', this)" id="name">鸣谢名单</li>
     </ul>
 </nav>
 
 <!-- 右侧主内容区 -->
 <main class="main-content" id="main-content">
+    <div id="top-banner" class="top-banner">
+        <p>配置保存成功</p>
+    </div>
+    <div id ="login_banner" class="top-banner online">
+        <p>正在登录</p>
+    </div>
+    <div id ="logout_banner" class="top-banner online">
+        <p>正在登出</p>
+    </div>
+    <div id ="error_banner" class="top-banner">
+        <p>操作失败</p>
+    </div>
+
+
 
     <!-- 系统配置面板 (默认显示) -->
     <div id="system-config" class="content-panel active">
@@ -240,8 +289,8 @@
             </div>
             -->
 
-            <button type="submit" class="submit-btn">保存配置</button>
-            <button type="submit" class="sure-btn active" id="login" onclick="onLoginOrOutButtonClick()">手动登录校园网</button>
+            <button type="submit" class="submit-btn" onclick="set_local_storage()">保存配置</button>
+            <button type="submit" class="sure-btn active" id="login" onclick="onLoginOrOutButtonClick()" >手动登录校园网</button>
             <button type="submit" class="sure-btn" id="logout" onclick="onLoginOrOutButtonClick()">退出登录</button>
     </div>
 
@@ -249,21 +298,34 @@
     <div id="timer-settings" class="content-panel">
         <h2 class="panel-title">定时设置</h2>
         <div class="empty-placeholder">
-            <p>计时任务可以让您在任何时候想登录校园网就自动登录上喵</p>
-            <button class="time-planer-button", id="creater">创建计时任务</button>
-            <button class="del-planer-button", id="del-button">删除所有</button>
+            <p>设置计时任务可以让您在任何时候想登录校园网就自动登录上喵</p>
+            <button class="time-planer-button", id="creater", onclick="onCreateTimeEventClick()">创建计时任务</button>
+            <button class="del-planer-button", id="del-button", onclick="onDelAll()">删除所有</button>
         </div>
+    </div>
+
+    <div id="plan" class="content-panel">
+        <h2 class="panel-title">计划</h2>
     </div>
 
 </main>
 
+
+
 <script>
+    let on_plan = false;
 
-    const createbutton = document.getElementById('creater');
+    window.addEventListener('DOMContentLoaded', () => {
 
-    createbutton.addEventListener('click', () => {
-        onCreateTimeEventClick()
+        console.log('>> 正在加载');
+        const username = localStorage.getItem('username');
+        const password = localStorage.getItem('password');
+
+        document.getElementById('username').value = username;
+        document.getElementById('password').value = password;
     });
+
+
 
 
     // 简单的标签页切换逻辑
@@ -278,6 +340,11 @@
 
         // 3. 显示目标面板
         document.getElementById(panelId).classList.add('active');
+        if (on_plan) {
+            if (panelId === 'timer-settings'){
+                document.getElementById('plan').classList.add('active');
+            }
+        }
 
 
 
@@ -287,29 +354,70 @@
 
     function onLoginOrOutButtonClick(){
 
-
-
-
         const enterbutton = document.getElementById('login');
         const closebutton = document.getElementById('logout');
 
         if(enterbutton.classList.contains('active')){
+            let login = document.getElementById('login_banner');
+            login.classList.add('show');
+            login.classList.add('move');
+
             enterbutton.classList.remove('active')
             closebutton.classList.add('active');
+
+            setTimeout(()=>{login.classList.remove('move')},1000)
+            login.classList.remove('show');
         } else {
+            let logout = document.getElementById('logout_banner');
+            logout.classList.add('show');
+            logout.classList.add('move');
+
             closebutton.classList.remove('active')
             enterbutton.classList.add('active');
 
+            setTimeout(()=>{logout.classList.remove('move')},1000)
+            logout.classList.remove('show');
+
+
         }
+
+
+
+    }
+
+    function set_local_storage(){
+        //set local storage
+        localStorage.setItem('username', document.getElementById('username').value);
+        localStorage.setItem('password', document.getElementById('password').value);
+        console.log('>> 配置已保存');
+
+        const banner = document.getElementById('top-banner');
+        banner.classList.add('show')
+        banner.classList.add('move');
+        setTimeout(() => {banner.classList.remove('move');banner.classList.remove('show');},1000);
 
     }
 
     function onCreateTimeEventClick(){
         const delbutton = document.getElementById('del-button');
         delbutton.classList.add('active');
-        const new_button = document.createElement('button');
-        document.getElementById('main-content').appendChild(new_button);
+        /*
+        const new_panel = document.createElement('div');
+        new_panel.textContent = "Hello, World!";
+        new_panel.classList.add('content-panel active');
 
+        document.getElementById('main-content').appendChild(new_panel);
+
+         */
+
+        document.getElementById('plan').classList.add('active');
+        on_plan = true;
+    }
+
+    function onDelAll(){
+        document.getElementById('plan').classList.remove('active');
+        on_plan = false;
+        document.getElementById('del-button').classList.remove('active');
     }
 </script>
 </body>
