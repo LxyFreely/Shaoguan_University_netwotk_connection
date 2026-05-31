@@ -205,36 +205,60 @@
             display: inline-block;
         }
         .top-banner {
-            border-width: 10px 10px ;
-            margin: 0 30% ;
+            position: absolute;
+            top: 10px;
+            left: 50%;
             align-content: center;
             padding: 0 40px;
             height: 40px;
             color: #1b5a1b;
             background-color: #6ebc6e;
             border-radius: 10px;
-            display: none;
+            display: inline-block;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             font-size: 15px;
+            border: 2px solid #1b5a1b;
             font-weight: bold;
-            border-color: #1b5a1b;
             z-index: 1000;    /*保证在最上层*/
             transform: translateY(-200%);
             transition: transform 0.4s ease-in-out;
 
         }
         .top-banner.online{
-            background-color: #1f2e3a;
+            background-color: #375467;
+            border: 2px solid #1a252f;
             color: #fafafd;
 
         }
 
-        .top-banner.show{
-            transform: translateY(-200%);
-            display: inline-block;
-        }
         .top-banner.move {
             transform: translateY(0);
+        }
+
+        .plan-step{    /*设置时间单元*/
+            align-content:baseline;
+            padding-bottom: 3px;
+            justify-content: left;
+            display: inline-block;
+        }
+        .time-input{
+            height: 35px;
+            width: 150px;
+            border: 1px solid #1a252f;
+            border-radius: 10px;
+            font-size: 20px;
+            text-align: center;
+            display: inline-block;
+
+        }
+        .mode-selector{
+            height: 35px;
+            border: 1px solid #1a252f;
+            border-radius: 10px;
+            width: 100px;
+            font-size: 15px;
+            display: inline-block;
+            text-align: center;
         }
 
 
@@ -298,14 +322,30 @@
     <div id="timer-settings" class="content-panel">
         <h2 class="panel-title">定时设置</h2>
         <div class="empty-placeholder">
-            <p>设置计时任务可以让您在任何时候想登录校园网就自动登录上喵</p>
-            <button class="time-planer-button", id="creater", onclick="onCreateTimeEventClick()">创建计时任务</button>
-            <button class="del-planer-button", id="del-button", onclick="onDelAll()">删除所有</button>
+            <p>设置计时任务可以让您在任何时候想登录校园网就自动登录，想自动登出就自动登出喵(╹ڡ╹ )</p>
+            <p>填写的时间格式为 XX:XX:XX哦，比如"5"要填成"05"，记得使用英文冒号，不要填错了喵</p>
+            <button class="time-planer-button"  id="creater" onclick="onCreateTimeEventClick()">创建计时任务</button>
+            <button class="del-planer-button" id="del-button" onclick="onDelAll()">删除所有</button>
+            <button class="del-planer-button" id="del-button-single" onclick="DelSingle()">删除最后一项</button>
+            <button class="time-planer-button" id="save" onclick="save_time_plan()">保存时间配置</button>
         </div>
     </div>
 
     <div id="plan" class="content-panel">
+
         <h2 class="panel-title">计划</h2>
+        <div id="step" class = "plan-step">
+            <label id="number">1.</label>
+            <label >时间：</label>
+            <input type="text"  class="time-input" value="00:00:00">
+            <label for="selectField">模式：</label>
+            <select id="selectField" class="mode-selector">
+                <option value="none">无</option>
+                <option value="online">上线</option>
+                <option value="offline">下线</option>
+            </select>
+
+        </div>
     </div>
 
 </main>
@@ -314,6 +354,10 @@
 
 <script>
     let on_plan = false;
+    let auto = false;
+    let judge = false;
+    let a = 0;
+
 
     window.addEventListener('DOMContentLoaded', () => {
 
@@ -323,6 +367,8 @@
 
         document.getElementById('username').value = username;
         document.getElementById('password').value = password;
+        read_time_plan();
+
     });
 
 
@@ -358,29 +404,35 @@
         const closebutton = document.getElementById('logout');
 
         if(enterbutton.classList.contains('active')){
+
+
+
             let login = document.getElementById('login_banner');
-            login.classList.add('show');
+            //login.classList.add('show');
             login.classList.add('move');
 
             enterbutton.classList.remove('active')
             closebutton.classList.add('active');
 
             setTimeout(()=>{login.classList.remove('move')},1000)
-            login.classList.remove('show');
         } else {
             let logout = document.getElementById('logout_banner');
-            logout.classList.add('show');
             logout.classList.add('move');
 
             closebutton.classList.remove('active')
             enterbutton.classList.add('active');
 
             setTimeout(()=>{logout.classList.remove('move')},1000)
-            logout.classList.remove('show');
 
 
         }
 
+        function make_login(){
+
+        }
+        function make_logout(){
+
+        }
 
 
     }
@@ -392,15 +444,16 @@
         console.log('>> 配置已保存');
 
         const banner = document.getElementById('top-banner');
-        banner.classList.add('show')
         banner.classList.add('move');
-        setTimeout(() => {banner.classList.remove('move');banner.classList.remove('show');},1000);
+        setTimeout(() => {banner.classList.remove('move');},1000);
 
     }
 
     function onCreateTimeEventClick(){
         const delbutton = document.getElementById('del-button');
+        const del_single = document.getElementById('del-button-single');
         delbutton.classList.add('active');
+        del_single.classList.add('active');
         /*
         const new_panel = document.createElement('div');
         new_panel.textContent = "Hello, World!";
@@ -412,12 +465,122 @@
 
         document.getElementById('plan').classList.add('active');
         on_plan = true;
+
+        if(judge){
+            judge = false;
+        } else {
+            copy_step(false,{});
+            console.log(a)
+        }
+
     }
 
     function onDelAll(){
         document.getElementById('plan').classList.remove('active');
         on_plan = false;
         document.getElementById('del-button').classList.remove('active');
+        document.getElementById('del-button-single').classList.remove('active');
+        const target = document.querySelectorAll('.plan-step');
+        const frame = document.getElementById('plan');
+        const time = target[0]
+        const clone = time.cloneNode(true);
+        judge = true;
+
+        target.forEach((item) => {
+            item.remove();
+        })
+        frame.append(clone)
+
+        a = 1;
+    }
+    function DelSingle(){
+        let target = document.querySelectorAll('.plan-step');
+        const frame = document.getElementById('plan');
+        const time = target[0];
+        const clone = time.cloneNode(true);
+        target[target.length-1].remove();
+        target = document.querySelectorAll('.plan-step');
+        a --
+
+        if(target.length === 0){
+            document.getElementById('plan').classList.remove('active');
+            on_plan = false;
+            document.getElementById('del-button').classList.remove('active');
+            document.getElementById('del-button-single').classList.remove('active');
+            judge = true;
+            frame.append(clone);
+            a = 1;
+        }
+    }
+
+     function copy_step(auto,data){
+         const time = document.querySelector('.plan-step');
+         let clone = time.cloneNode(true);
+
+        const frame = document.getElementById('plan');
+        clone.id = "plan-step" + (a).toString();
+        let clone_name = clone.querySelector('label');
+            clone_name.textContent = (++a).toString() + ".";
+
+
+        if(auto){
+
+
+            let set_time = data.time;
+            let set_mode = data.mode;
+
+            let get_time = clone.querySelector(".time-input");
+            let get_mode = clone.querySelector('.mode-selector');
+
+            get_mode.value = set_mode;
+            get_time.value = set_time;
+
+        } else {
+
+        }
+
+        frame.appendChild(clone);
+
+    }
+    
+    function save_time_plan(){
+        const plan = document.querySelectorAll('.plan-step');
+        let schedule = {
+            "plan": []
+        }
+        plan.forEach(item => {
+            let time = item.querySelector('.time-input');
+            let mode = item.querySelector('.mode-selector')
+            let node = {
+                "time": time.value,
+                "mode": mode.value
+            }
+            schedule.plan.push(node)
+            localStorage.setItem('schedule', JSON.stringify(schedule));
+            console.log(">> 时间配置已保存")
+        })
+    }
+
+    function read_time_plan(){
+
+        const schedule = JSON.parse(localStorage.getItem('schedule'));
+        console.log(schedule)
+        if(schedule){
+            schedule.plan.forEach((data) => {
+                copy_step(true,data)
+            })
+        }
+        on_plan = true;
+        auto = true;
+        document.getElementById('del-button').classList.add('active');
+        document.getElementById('del-button-single').classList.add('active');
+        const time = document.getElementById('step');
+        time.remove();
+
+
+
+
+
     }
 </script>
 </body>
