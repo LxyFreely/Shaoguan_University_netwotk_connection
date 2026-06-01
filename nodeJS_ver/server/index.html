@@ -235,6 +235,19 @@
             transform: translateY(0);
         }
 
+        .top-banner.suc {
+            border: 2px solid #1b5a1b;
+            color: #1b5a1b;
+            background-color: #6ebc6e;
+
+        }
+
+        .top-banner.err {
+            background-color: rgba(255,17,9,0.57);
+            color: #810808;
+            border: 2px solid #810808;
+        }
+
         .plan-step{    /*设置时间单元*/
             align-content:baseline;
             padding-bottom: 3px;
@@ -306,12 +319,12 @@
                 <label for="password">密码</label>
                 <input type="password" id="password" name="password" placeholder="请输入密码" required>
             </div>
-            <!--
+
             <div class="checkbox-group">
                 <input type="checkbox" id="remember" name="remember">
-                <label for="remember" style="margin-bottom: 0; font-weight: normal;">保存配置到本地</label>
+                <label for="remember" style="margin-bottom: 0; font-weight: normal;">开机自启动</label>
             </div>
-            -->
+
 
             <button type="submit" class="submit-btn" onclick="set_local_storage()">保存配置</button>
             <button type="submit" class="sure-btn active" id="login" onclick="onLoginOrOutButtonClick()" >手动登录校园网</button>
@@ -333,7 +346,7 @@
 
     <div id="plan" class="content-panel">
 
-        <h2 class="panel-title">计划</h2>
+        <h2 class="panel-title", id="ScheduleField">计划</h2>
         <div id="step" class = "plan-step">
             <label id="number">1.</label>
             <label >时间：</label>
@@ -356,20 +369,19 @@
     let on_plan = false;
     let auto = false;
     let judge = false;
+    let have_param = true;
     let a = 0;
 
 
-    window.addEventListener('DOMContentLoaded', () => {
+    console.log('>> 正在加载');
+    const username = localStorage.getItem('username');
+    const password = localStorage.getItem('password');
 
-        console.log('>> 正在加载');
-        const username = localStorage.getItem('username');
-        const password = localStorage.getItem('password');
+    document.getElementById('username').value = username;
+    document.getElementById('password').value = password;
+    read_time_plan();
 
-        document.getElementById('username').value = username;
-        document.getElementById('password').value = password;
-        read_time_plan();
 
-    });
 
 
 
@@ -413,6 +425,7 @@
 
             enterbutton.classList.remove('active')
             closebutton.classList.add('active');
+            make_login()
 
             setTimeout(()=>{login.classList.remove('move')},1000)
         } else {
@@ -421,6 +434,8 @@
 
             closebutton.classList.remove('active')
             enterbutton.classList.add('active');
+            make_logout()
+
 
             setTimeout(()=>{logout.classList.remove('move')},1000)
 
@@ -428,10 +443,26 @@
         }
 
         function make_login(){
-
+            fetch("http://localhost:3000/login", {method:"GET"}).then(
+                data => {
+                    console.log(`>> 登入请求发送成功 [${data}]`)
+                }
+            ).catch(
+                err => {
+                    console.log(`>> 登入请求发送失败 [${err}]`)
+                }
+            )
         }
         function make_logout(){
-
+            fetch("http://localhost:3000/logout", {method:"GET"}).then(
+                data => {
+                    console.log(`>> 登出请求发送成功 [${data}]`)
+                }
+            ).catch(
+                err => {
+                    console.log(`>> 登出请求发送失败 [${err}]`)
+                }
+            )
         }
 
 
@@ -445,7 +476,10 @@
 
         const banner = document.getElementById('top-banner');
         banner.classList.add('move');
-        setTimeout(() => {banner.classList.remove('move');},1000);
+        banner.textContent = '配置保存成功'
+        setTimeout(() => {banner.classList.remove('move')},1000);
+
+        read_account();
 
     }
 
@@ -468,6 +502,7 @@
 
         if(judge){
             judge = false;
+
         } else {
             copy_step(false,{});
             console.log(a)
@@ -520,7 +555,13 @@
         const frame = document.getElementById('plan');
         clone.id = "plan-step" + (a).toString();
         let clone_name = clone.querySelector('label');
-            clone_name.textContent = (++a).toString() + ".";
+        clone_name.textContent = (++a).toString() + ".";
+
+
+        if(!have_param){   //用于第一次检测是否有localstorage
+            time.remove()
+            have_param = true;
+        }
 
 
         if(auto){
@@ -545,6 +586,7 @@
     
     function save_time_plan(){
         const plan = document.querySelectorAll('.plan-step');
+        const plan_banner = document.getElementById('plan')
         let schedule = {
             "plan": []
         }
@@ -557,29 +599,90 @@
             }
             schedule.plan.push(node)
             localStorage.setItem('schedule', JSON.stringify(schedule));
-            console.log(">> 时间配置已保存")
+
+
+
         })
+        if(plan_banner.classList.contains('active')) {
+            read_schedule(schedule);
+
+            console.log(">> 时间配置已保存")
+
+            const banner = document.getElementById('top-banner');
+            banner.textContent = "时间配置已保存"
+            banner.classList.add('move');
+            setTimeout(() => {banner.classList.remove('move');},1000);
+        } else {
+            console.log(">> 请创建时间计划")
+            const banner = document.getElementById('top-banner');
+            banner.textContent = "请创建时间计划"
+            banner.classList.add("err");
+            banner.classList.add('move');
+            setTimeout(() => {banner.classList.remove('move')},1000);
+            setTimeout(() => {banner.classList.remove("err")}, 2000);
+
+
+        }
+
     }
 
-    function read_time_plan(){
 
-        const schedule = JSON.parse(localStorage.getItem('schedule'));
-        console.log(schedule)
-        if(schedule){
+    function read_time_plan(){
+        const param = localStorage.getItem('schedule');
+        console.log(param)
+        if(param !== null){
+            const schedule = JSON.parse(localStorage.getItem('schedule'));
             schedule.plan.forEach((data) => {
+
                 copy_step(true,data)
             })
+
+            const time = document.getElementById('step');
+            time.remove();
+            on_plan = true;
+            auto = true;
+            document.getElementById('del-button').classList.add('active');
+            document.getElementById('del-button-single').classList.add('active');
+
+
+            console.log(JSON.stringify(schedule))
+
+            setTimeout(() => {read_schedule(schedule);
+                read_account();},1000);
+        } else {
+
+            have_param = false;
+            return 0
         }
-        on_plan = true;
-        auto = true;
-        document.getElementById('del-button').classList.add('active');
-        document.getElementById('del-button-single').classList.add('active');
-        const time = document.getElementById('step');
-        time.remove();
 
 
+    }
 
+    function read_schedule(schedule){
+        fetch("http://localhost:3000/PushTimeData", {method:'POST',
+            headers : {
+                'Content-Type': 'application/json',
+            },body: JSON.stringify(schedule)}).then(
+            data => {
+                console.log(">> 发送时间计划成功")
 
+            }
+        )
+    }
+
+    function read_account(){
+        const username = localStorage.getItem('username');
+        const password = localStorage.getItem('password');
+        const data = {
+            "name":username,
+            "password": password
+        }
+        fetch("http://localhost:3000/PushAccount", {method:"POST", headers : {
+                'Content-Type': 'application/json'},body:JSON.stringify(data)}).then(
+                    data => {
+                        console.log(">> 账号数据发送成功")
+                    }
+        )
 
     }
 </script>
