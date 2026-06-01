@@ -1,8 +1,9 @@
 name=251*******
 password=17********
-waiting=true
+waiting=false
 power_on_start=false
 
 使用说明：
 请在name和password后面替换为您的账号密码
-其中waiting为在窗口运行完后等待，power_on_start为设置开机自启动,true表示启用，false表示禁用
+waiting选项已经弃用，可以随便发电，之后会删除此选项
+power_on_start是开机启动

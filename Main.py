@@ -11,6 +11,7 @@ from PIL import Image
 
 import pannal
 import wang as net
+import config
 
 
 
@@ -21,6 +22,7 @@ def make_sub():
         pystray.MenuItem('设置开机自启动(根据配置文件)',lambda: autorun()),
         pystray.MenuItem('上线',lambda: main()),
         pystray.MenuItem('下线',lambda: logout()),
+        pystray.MenuItem('配置程序',lambda: threading.Thread(target=conf()).start()),
         pystray.MenuItem('打开配置文件', lambda: os.startfile('properties.prop')),
         pystray.MenuItem('创建计时任务', lambda : threading.Thread(target=lambda : make_time_process()).start()),
         pystray.MenuItem('退出程序', lambda: sub.stop())
@@ -44,6 +46,9 @@ def make_time_process():
     tk =  pannal.pannal()
     tk.start()
 
+def conf():
+    tkc = config.config()
+    tkc.start()
 
 def autorun():
     try:
@@ -157,4 +162,3 @@ def get_file_dir(file=''):
 if __name__ == '__main__':
     make_sub()
     autorun()
-    main()
