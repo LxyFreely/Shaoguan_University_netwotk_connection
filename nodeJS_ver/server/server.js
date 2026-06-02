@@ -1,14 +1,13 @@
 const express = require('express');
-const fs = require('fs');
 const path = require("path");
 const os = require('os')
-const chalk = require('chalk')
 
 class server {
     constructor() {
         this.name = 'server';
         this.on_listen = undefined;
         this.port = 3000;
+        this.boot = false;
         this.time_schedule = {
             "plan":[
                 {
@@ -22,6 +21,7 @@ class server {
             "password": ""
         };
         this.host = () => {
+
             const interfaces =  os.networkInterfaces();
             for(const name of Object.keys(interfaces)){
                 for (const iface of interfaces[name]){
@@ -31,6 +31,8 @@ class server {
                 }
             }
             return "127.0.0.1"
+
+
         };
         this.app = express();
 
@@ -47,34 +49,61 @@ class server {
             console.log(">> [server] receive time plan ")
             this.time_schedule = req.body;
             console.log(req.body);
-        })
+            res.end();
+        });
 
         this.app.post('/PushAccount', (req, res) => {
             console.log(">> [server] receive account ");
             this.account = req.body;
             console.log(req.body)
-        })
+            res.end();
+        });
         this.app.get('/login',(req,res) => {
             console.log(">> [server] receive login")
             this.is_login = true;
             res.send("success")
+            res.end();
 
-        })
+
+        });
         this.app.get('/login-finish',(req,res) => {
             console.log(">> [server][login] finish request,calling back...")
             this.is_login = false;
+            res.send(">> process end.")
+            res.end();
 
-        })
+
+        });
         this.app.get('/logout',(req,res) => {
             console.log(">> [server] receive logout")
             this.is_logout = true;
             res.send("success")
+            res.end();
 
-        })
+
+        });
         this.app.get('/logout-finish',(req,res) => {
             console.log(">> [server][logout] finish request,calling back...")
             this.is_logout = false;
-        })
+            res.send(">> process end.")
+            res.end();
+
+        });
+
+        this.app.get('/boot',(req,res) => {
+            console.log(">> [server][boot] receive boot")
+            console.log(">> [server][boot] finish request,calling back...")
+            this.boot = true;
+            res.end();
+
+        });
+        this.app.get('/unboot',(req,res) => {
+            console.log(">> [server][unboot] receive unboot")
+            console.log(">> [server][unboot] finish request,calling back...")
+            this.boot = false;
+            res.end();
+
+        });
 
     }
 

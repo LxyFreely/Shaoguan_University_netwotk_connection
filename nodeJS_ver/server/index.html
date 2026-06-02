@@ -321,8 +321,8 @@
             </div>
 
             <div class="checkbox-group">
-                <input type="checkbox" id="remember" name="remember">
-                <label for="remember" style="margin-bottom: 0; font-weight: normal;">开机自启动</label>
+                <input type="checkbox" id="boot" name="remember" >
+                <label for="boot" style="margin-bottom: 0; font-weight: normal;" >开机自启动</label>
             </div>
 
 
@@ -376,9 +376,15 @@
     console.log('>> 正在加载');
     const username = localStorage.getItem('username');
     const password = localStorage.getItem('password');
+    const checkbox = localStorage.getItem('on_boot');
 
     document.getElementById('username').value = username;
     document.getElementById('password').value = password;
+    if(checkbox === 'true'){
+        document.getElementById('boot').checked = true;
+    } else if (checkbox === 'false'){
+        document.getElementById('boot').checked = false;
+    }
     read_time_plan();
 
 
@@ -472,6 +478,22 @@
         //set local storage
         localStorage.setItem('username', document.getElementById('username').value);
         localStorage.setItem('password', document.getElementById('password').value);
+        localStorage.setItem('on_boot', document.getElementById('boot').checked ? 'true' : 'false');
+        const boot = document.getElementById('boot');
+        if(boot.checked){
+            fetch("http://localhost:3000/boot", {method:'GET'}).then(
+                data => {
+                    console.log(">> 成功设置开机自启")
+                }
+            )
+        } else {
+            fetch("http://localhost:3000/unboot", {method:'GET'}).then(
+                data => {
+                    console.log(">> 成功取消开机自启")
+                }
+            )
+        }
+
         console.log('>> 配置已保存');
 
         const banner = document.getElementById('top-banner');
@@ -662,6 +684,7 @@
         fetch("http://localhost:3000/PushTimeData", {method:'POST',
             headers : {
                 'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },body: JSON.stringify(schedule)}).then(
             data => {
                 console.log(">> 发送时间计划成功")
