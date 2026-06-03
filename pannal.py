@@ -1,11 +1,14 @@
 import tkinter
 from tkinter import messagebox
+import queue
 
 class pannal:
     def __init__(self):
         self.GUI = tkinter.Tk()
         self.GUI.title("这是校园网连接系统")
         self.center_window(self.GUI, 400, 260)
+        # 设置窗口关闭协议
+        self.GUI.protocol("WM_DELETE_WINDOW", self.on_closing)
 
         self.tips = tkinter.LabelFrame(self.GUI, text="请输入时间")
         self.tips_h = tkinter.Label(self.tips, text="小时")
@@ -121,7 +124,7 @@ class pannal:
         except Exception as e:
             print(e)
         finally:
-            messagebox.showinfo("信息","保存成功")
+            self.GUI.after(0, lambda: messagebox.showinfo("信息","保存成功"))
             return
 
     def clear_all(self):
@@ -130,5 +133,7 @@ class pannal:
 
     def start(self):
         self.GUI.mainloop()
-
-
+    
+    def on_closing(self):
+        # 当用户点击窗口关闭按钮时销毁窗口
+        self.GUI.destroy()

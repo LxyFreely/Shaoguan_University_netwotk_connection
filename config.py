@@ -1,12 +1,14 @@
 import tkinter
 from tkinter import messagebox
-import os
+import queue
 
 class config:
     def __init__(self):
         self.GUI = tkinter.Tk()
         self.GUI.title("属性配置程序")
         self.center_window(self.GUI, 400, 300)
+        # 设置窗口关闭协议
+        self.GUI.protocol("WM_DELETE_WINDOW", self.on_closing)
 
         # 创建标签和输入框
         self.tip_name = tkinter.Label(self.GUI, text="用户名(name)")
@@ -76,9 +78,9 @@ class config:
                         self.poweron_var.set(value.lower() == 'true')
         except FileNotFoundError:
             # 如果文件不存在，显示提示
-            messagebox.showwarning("警告", "properties.prop 文件不存在，将创建新文件")
+            self.GUI.after(0, lambda: messagebox.showwarning("警告", "properties.prop 文件不存在，将创建新文件"))
         except Exception as e:
-            messagebox.showerror("错误", f"加载配置文件时发生错误: {e}")
+            self.GUI.after(0, lambda: messagebox.showerror("错误", f"加载配置文件时发生错误: {e}"))
 
     def save_properties(self):
         """保存配置到properties.prop文件"""
@@ -93,10 +95,14 @@ class config:
                 f.write('waiting选项已经弃用，可以随便发电，之后会删除此选项\n')
                 f.write('power_on_start是开机启动\n')
             
-            messagebox.showinfo("成功", "配置已保存到properties.prop文件")
+            self.GUI.after(0, lambda: messagebox.showinfo("成功", "配置已保存到properties.prop文件"))
             self.GUI.destroy()
         except Exception as e:
-            messagebox.showerror("错误", f"保存配置文件时发生错误: {e}")
+            self.GUI.after(0, lambda: messagebox.showerror("错误", f"保存配置文件时发生错误: {e}"))
 
     def start(self):
         self.GUI.mainloop()
+    
+    def on_closing(self):
+        # 当用户点击窗口关闭按钮时销毁窗口
+        self.GUI.destroy()
