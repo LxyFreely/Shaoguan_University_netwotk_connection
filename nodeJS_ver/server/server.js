@@ -8,6 +8,8 @@ class server {
         this.on_listen = undefined;
         this.port = 3000;
         this.boot = false;
+        this.openlink = "";
+        this.on_link = false;
         this.time_schedule = {
             "plan":[
                 {
@@ -38,11 +40,14 @@ class server {
 
         this.is_login = false;
         this.is_logout = false;
+
+        this.app.use(express.static(path.join(__dirname, 'public')));
         this.app.use(express.json())    //使用json作为返回一定要加上！！！！
+        this.app.use(express.urlencoded({ extended: true }));
 
 
         this.app.get( '/', (req, res) => {
-            res.sendFile(path.join(__dirname, 'index.html'))
+            res.sendFile(path.join(__dirname + '\\public\\res', 'index.html'))
         });
 
         this.app.post('/PushTimeData', (req, res) => {
@@ -104,6 +109,14 @@ class server {
             res.end();
 
         });
+        this.app.post('/open_link',(req,res) => {
+            console.log(">> [server][open_link] receive open_link")
+            this.openlink = req.body.url;
+            this.openlink = this.openlink.substring(this.openlink.indexOf("https://"), this.openlink.length);
+            this.on_link = true;
+            console.log(">> [server][open_link] finish request,calling back...")
+            res.end();
+        })
 
     }
 

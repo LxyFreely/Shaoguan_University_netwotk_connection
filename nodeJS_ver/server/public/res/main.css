@@ -1,0 +1,315 @@
+/* --- 基础重置 --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Microsoft YaHei", Arial, sans-serif;
+    display: flex;
+    height: 100vh; /* 占满整个视口高度 */
+    background-color: #f4f6f9;
+    color: #333;
+}
+
+/* --- 左侧菜单栏样式 --- */
+.sidebar {
+    width: 250px;
+    background-color: #2c3e50; /* 深色背景 */
+    color: #ecf0f1;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0; /* 防止被压缩 */
+}
+
+.sidebar-title {
+    padding: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    border-bottom: 1px solid #34495e;
+    background-color: #1a252f;
+}
+
+.menu {
+    list-style: none;
+    margin-top: 10px;
+}
+
+.menu-item {
+    padding: 15px 20px;
+    cursor: pointer;
+    transition: background 0.3s;
+    border-left: 4px solid transparent;
+}
+
+.menu-item:hover {
+    background-color: #34495e;
+}
+
+/* 菜单激活状态 */
+.menu-item.active {
+    background-color: #34495e;
+    border-left-color: #3498db; /* 蓝色高亮条 */
+    color: #3498db;
+}
+
+/* --- 右侧内容区域样式 --- */
+.main-content {
+    flex-grow: 1;
+    padding: 40px;
+    overflow-y: auto; /* 内容过多时滚动 */
+}
+
+.git_label {
+    margin-top: 15px;
+}
+
+/* 默认隐藏所有内容面板 */
+.content-panel {
+    display: none;
+    background-color: #fff;
+    padding:  30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    max-width: 500px;
+    margin: 10px auto ; /* 居中显示 */
+}
+
+/* 显示激活的面板 */
+.content-panel.active {
+    display: block;
+}
+
+
+
+.panel-title {
+    margin-bottom: 25px;
+    font-size: 24px;
+    color: #2c3e50;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
+}
+
+/* --- 登录表单样式 --- */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555;
+}
+
+.form-group input[type="text"],
+.form-group input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    border-color: #3498db;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.checkbox-group input {
+    margin-right: 8px;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-bottom: 10px;
+}
+.sure-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+    display: none;
+
+}
+
+.sure-btn.active{
+    display: block;
+}
+
+.submit-btn:hover {
+    background-color: #2980b9;
+}
+
+.sure-btn:hover {
+    background-color: #1f2e3a;
+}
+
+/* 定时设置留空的提示文字 */
+.empty-placeholder {
+    color: #1f2e3a;
+    margin-top:5px;
+    font-size: 13px;
+}
+.time-planer-button {
+    margin-top: 10px;
+    border-radius: 30px;
+    border-color: #1a252f;
+    background-color: #f4f6f9;
+    color: #1a252f;
+    font-size: 15px;
+    height: 40px;
+    display: inline-block;
+    padding: 0 10px;
+
+}
+.del-planer-button {
+    margin-top: 10px;
+    border-radius: 30px;
+    border-color: #810808;
+    background-color: #f4f6f9;
+    color: #810808;
+    font-size: 15px;
+    height: 40px;
+    display: none;
+    padding: 0 10px;
+}
+.del-planer-button.active {
+    display: inline-block;
+}
+.top-banner {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    align-content: center;
+    padding: 0 40px;
+    height: 40px;
+    color: #1b5a1b;
+    background-color: #6ebc6e;
+    border-radius: 10px;
+    display: inline-block;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    font-size: 15px;
+    border: 2px solid #1b5a1b;
+    font-weight: bold;
+    z-index: 1000;    /*保证在最上层*/
+    transform: translateY(-200%);
+    transition: transform 0.4s ease-in-out;
+
+}
+.top-banner.online{
+    background-color: #375467;
+    border: 2px solid #1a252f;
+    color: #fafafd;
+
+}
+
+.top-banner.err {
+    background-color: rgba(255,17,9,0.57);
+    color: #810808;
+    border: 2px solid #810808;
+}
+
+.top-banner.move{
+    transform: translateY(0);
+}
+
+.plan-step{    /*设置时间单元*/
+    align-content:baseline;
+    padding-bottom: 3px;
+    justify-content: left;
+    display: inline-block;
+}
+.time-input{
+    height: 35px;
+    width: 150px;
+    border: 1px solid #1a252f;
+    border-radius: 10px;
+    font-size: 20px;
+    text-align: center;
+    display: inline-block;
+
+}
+.mode-selector{
+    height: 35px;
+    border: 1px solid #1a252f;
+    border-radius: 10px;
+    width: 100px;
+    font-size: 15px;
+    display: inline-block;
+    text-align: center;
+}
+.credit-pic {
+    width: 60px;
+    margin: 0 auto 5px auto;
+    height: 60px;
+    align-self: center;
+    justify-content: center;
+    display: block;
+    border-radius: 10px;
+
+}
+
+.credit-single {
+    width: 160px;
+    height: 80px;
+    text-align: center;
+    background-color: rgba(90,158,255,0.57);
+    border: 2px solid rgba(21, 15, 255, 0.42);
+    align-content: center;
+    font-weight: bold;
+    justify-content: center;
+    border-radius: 10px;
+
+
+}
+.credit-div{
+    position: absolute;
+    top: 100px;
+    left: 50%;
+    justify-content:center;
+    display: none;
+
+}
+
+.float-text{
+    font-size: 13px;
+}
+
+.float-text.name{
+    font-size: 15px;
+}
+.credit-div.active{
+    display: block;
+}
+
+
+.credit-div:hover{
+    animation-play-state: paused;
+}
+#program_url{
+    color: #0058bc;
+    text-decoration: underline;
+}

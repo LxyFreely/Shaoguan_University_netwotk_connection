@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>校园网，通往每一种生活</title>
+    <link rel="stylesheet" href="res/main.css">
+</head>
+<body>
+
+<!-- 左侧菜单栏 -->
+<nav class="sidebar">
+    <div class="sidebar-title">校园网自动连接系统</div>
+    <ul class="menu">
+        <!-- 添加 onclick 事件用于切换内容 -->
+        <li class="menu-item active" onclick="switchTab('system-config', this)">系统配置</li>
+        <li class="menu-item" onclick="switchTab('timer-settings', this)">定时设置</li>
+        <li class="menu-item" onclick="switchTab('credit', this)" >鸣谢名单</li>
+    </ul>
+</nav>
+
+<!-- 右侧主内容区 -->
+<main class="main-content" id="main-content">
+    <div id="top-banner" class="top-banner">
+        <p>配置保存成功</p>
+    </div>
+    <div id ="login_banner" class="top-banner online">
+        <p>正在登录</p>
+    </div>
+    <div id ="logout_banner" class="top-banner online">
+        <p>正在登出</p>
+    </div>
+    <div id ="error_banner" class="top-banner">
+        <p>操作失败</p>
+    </div>
+
+
+
+    <!-- 系统配置面板 (默认显示) -->
+    <div id="system-config" class="content-panel active">
+        <h2 class="panel-title">系统登录配置</h2>
+
+            <div class="form-group">
+                <label for="username">账号</label>
+                <input type="text" id="username" name="username" placeholder="请输入校园网账号" required>
+            </div>
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" name="password" placeholder="请输入密码" required>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="boot" name="remember" >
+                <label for="boot" style="margin-bottom: 0; font-weight: normal;" >开机自启动</label>
+            </div>
+
+
+            <button type="submit" class="submit-btn" onclick="set_local_storage()">保存配置</button>
+            <button type="submit" class="sure-btn active" id="login" onclick="onLoginOrOutButtonClick()" >手动登录校园网</button>
+            <button type="submit" class="sure-btn" id="logout" onclick="onLoginOrOutButtonClick()">退出登录</button>
+    </div>
+
+    <!-- 定时设置面板 (默认隐藏) -->
+    <div id="timer-settings" class="content-panel">
+        <h2 class="panel-title">定时设置</h2>
+        <div class="empty-placeholder">
+            <p>设置计时任务可以让您在任何时候想登录校园网就自动登录，想自动登出就自动登出喵(╹ڡ╹ )</p>
+            <p>填写的时间格式为 XX:XX:XX哦，比如"5"要填成"05"，记得使用英文冒号，不要填错了喵</p>
+            <button class="time-planer-button"  id="creater" onclick="onCreateTimeEventClick()">创建计时任务</button>
+            <button class="del-planer-button" id="del-button" onclick="onDelAll()">删除所有</button>
+            <button class="del-planer-button" id="del-button-single" onclick="DelSingle()">删除最后一项</button>
+            <button class="time-planer-button" id="save" onclick="save_time_plan()">保存时间配置</button>
+        </div>
+    </div>
+
+    <div id="plan" class="content-panel">
+
+        <h2 class="panel-title" id="ScheduleField">计划</h2>
+        <div id="step" class = "plan-step">
+            <label id="number">1.</label>
+            <label >时间：</label>
+            <input type="text"  class="time-input" value="00:00:00">
+            <label for="selectField">模式：</label>
+            <select id="selectField" class="mode-selector">
+                <option value="none">无</option>
+                <option value="online">上线</option>
+                <option value="offline">下线</option>
+            </select>
+
+        </div>
+    </div>
+
+    <div id="credit" class="content-panel">
+        <h2 class="panel-title">感谢使用本软件！</h2>
+        <p class="empty-placeholder">本项目由ZX_RAYER和Lxy_freely共同制作</p>
+        <p class="empty-placeholder">我没想过这个项目能够这么快完成，实际发现热爱起来干什么都有力量</p>
+        <h3 class="empty-placeholder">别忘了来GitHub上来支持我们，记得留下一个免费的star喵ヾ(≧ ▽ ≦)ゝ</h3>
+        <h4 class="empty-placeholder" onclick="search(this.textContent)", id="program_url"> 项目地址: https://github.com/ZX-RAY1124/Shaoguan_University_network_connection</h4>
+        <img class="git_label" src="https://img.shields.io/github/stars/ZX-RAY1124/Shaoguan_University_netwotk_connection" alt="Github stars">
+        <img class="git_label" src="https://img.shields.io/badge/Nodejs_ver.-21.16.0-yellow" alt="Nodejs ver.21.16.0">
+        <img class="git_label" src="https://img.shields.io/badge/Maximize_coder-ZX_RAYER1124-blue" alt="author_1">
+        <img class="git_label" src="https://img.shields.io/badge/A_good_code_%20conductor-LxyFreely-green">
+        <img class="git_label" src="https://img.shields.io/badge/only_use_in-Shaoguan_University-brown">
+
+
+    </div>
+
+    <div id="ZX_RAYER" class="credit-div">
+        <img class="credit-pic" src="res/zx_rayer.png" alt="ZX_RAYER.png">
+        <div class="credit-single">
+            <p class="float-text">项目创始人</p>
+            <p class="float-text">Nodejs ver和Python ver1.0总负责人</p>
+            <p class="float-text name">ZX_RAYER 1124</p>
+        </div>
+    </div>
+
+    <div id="LXY_FREELY" class="credit-div">
+        <img class="credit-pic" src="res/Lxy_freely.jpg" alt="ZX_RAYER.png">
+        <div class="credit-single">
+            <p class="float-text">项目负责人</p>
+            <p class="float-text">Python ver 2.0负责人</p>
+            <p class="float-text name">Lxy_freely</p>
+        </div>
+    </div>
+
+</main>
+
+
+
+<script src="res/main_js.js"></script>
+</script>
+<script src="res/credit_animation.js"></script>
+</body>
+</html>
