@@ -18,8 +18,8 @@
 
 软件下载地址：   
 [NodeJS版本]   
-安装包：https://github.com/ZX-RAY1124/Shaoguan_University_network_connection/releases/download/npm_version/Setup.1.0.0.exe  
-压缩包：https://github.com/ZX-RAY1124/Shaoguan_University_network_connection/releases/download/npm_version_zip/nodejs.ver1.0.0.winx64.zip  
+安装包：https://github.com/ZX-RAY1124/Shaoguan_University_network_connection/releases/download/npm_version/Setup.1.0.0.exe    
+压缩包：https://github.com/ZX-RAY1124/Shaoguan_University_network_connection/releases/download/npm_version_zip/nodejs.ver1.0.0.winx64.zip   
 # 🫵应用介绍    
 
 是的，朋友，我知道连接校园网只需要用手点一下按钮就可以了
