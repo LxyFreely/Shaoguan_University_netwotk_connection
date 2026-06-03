@@ -9,9 +9,9 @@
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://python.org)
 [![Stars](https://img.shields.io/github/stars/ZX-RAY1124/Shaoguan_University_netwotk_connection)](https://github.com/ZX-RAY1124/Shaoguan_University_netwotk_connection)
 
-</div>
+</div>   
 
-> 本脚本由化土学院 ZX_RAYER 制作  
+> 本脚本由化土学院 ZX_RAYER 和信工学院 Lxy_Freely制作  
 > **使用库：** `selenium` `os` `sys`  
 > **Python 版本：** 3.13  
 > _MIT License_
