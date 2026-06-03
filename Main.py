@@ -23,7 +23,7 @@ def make_sub():
         pystray.MenuItem('上线',lambda: main()),
         pystray.MenuItem('下线',lambda: logout()),
         pystray.MenuItem('配置程序',lambda: threading.Thread(target=lambda: conf(), daemon=True).start()),
-        pystray.MenuItem('打开配置文件', lambda: os.startfile('properties.prop')),
+        #pystray.MenuItem('打开配置文件', lambda: os.startfile('properties.prop')),
         pystray.MenuItem('创建计时任务', lambda : threading.Thread(target=lambda : make_time_process(), daemon=True).start()),
         pystray.MenuItem('退出程序', lambda: sub.stop())
     )
@@ -78,11 +78,21 @@ def autorun():
         identify = f.readlines()
         ans = []
         for line in identify:
-            ans.append(line.strip('\n').split("="))
+            # 跳过注释行和空行
+            stripped_line = line.strip('\n').strip()
+            if stripped_line and not stripped_line.startswith('#') and '=' in stripped_line:
+                ans.append(stripped_line.split("=", 1))  # 使用1作为分割限制，避免因值中包含=号而出错
         dir_app = get_file_dir('make_connection.exe')
 
-        #判断是否需要开机自启动
-        if ans[3][1] == 'true':
+        # 寻找power_on_start的值
+        power_on_start_value = None
+        for item in ans:
+            if item[0] == 'power_on_start':
+                power_on_start_value = item[1]
+                break
+        
+        # 如果找到了power_on_start值，判断是否需要开机自启动
+        if power_on_start_value == 'true':
             if registry_method('r'):
                 pass
             else:
@@ -111,7 +121,10 @@ def main():
             identify = f.readlines()
             ans = []
             for line in identify:
-                ans.append(line.strip('\n').split("="))
+                # 跳过注释行和空行
+                stripped_line = line.strip('\n').strip()
+                if stripped_line and not stripped_line.startswith('#') and '=' in stripped_line:
+                    ans.append(stripped_line.split("=", 1))  # 使用1作为分割限制，避免因值中包含=号而出错
             dir_app = get_file_dir('make_connection.exe')
             print(dir_app)
         except Exception as e:
@@ -125,8 +138,28 @@ def main():
             root.destroy()
             return
         
+        # 提取用户名和密码
+        username = None
+        password = None
+        
+        for item in ans:
+            if item[0] == 'name':
+                username = item[1]
+            elif item[0] == 'password':
+                password = item[1]
+        
+        if username is None or password is None:
+            import time
+            time.sleep(0.1)
+            import tkinter as tk
+            root = tk.Tk()
+            root.withdraw()
+            messagebox.showerror("提示", "配置文件中缺少用户名或密码")
+            root.destroy()
+            return
+        
         try:
-            suc = net.login(ans[0][1], ans[1][1])
+            suc = net.login(username, password)
             # 延迟执行GUI更新
             import time
             time.sleep(0.1)  # 短暂延迟以确保pystray菜单已释放
