@@ -20,7 +20,7 @@ def make_sub():
     menu = pystray.Menu(
         pystray.MenuItem('检测状态',lambda:check()),
         pystray.MenuItem('设置开机自启动(根据配置文件)',lambda: autorun()),
-        pystray.MenuItem('上线',lambda: threading.Thread( main()).start()),
+        pystray.MenuItem('上线',lambda: main()),
         pystray.MenuItem('下线',lambda: logout()),
         pystray.MenuItem('配置程序',lambda: threading.Thread(target=lambda: conf(), daemon=True).start()),
         pystray.MenuItem('打开配置文件', lambda: os.startfile('properties.prop')),
