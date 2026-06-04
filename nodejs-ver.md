@@ -1,7 +1,7 @@
 <div align="center">
 
-<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=280 height=52 src="//music.163.com/outchain/player?type=2&id=28830412&auto=1&height=32"></iframe>
-
+[点我播放bgm](music.163.com/outchain/player?type=2&id=28830412&auto=1&height=32)
+  
 ## 🤩-FASTER-🤩   
 ## 🤯?!HIGHER?!🤯   
 ## 😃!!STRONGER THAN BEFORE!!😃
