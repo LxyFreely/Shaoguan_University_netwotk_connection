@@ -55,7 +55,7 @@ npm install electron
 全部下载完成后，务必再进行下一步
 ```commandline
 npm install electron-fix -g
-electron-fix start //等待上一步运行完后运行这一步 这是为了保证electron没有热河问题
+electron-fix start //等待上一步运行完后运行这一步 这是为了保证electron没有任何问题
 ```
 接下来，也是最后一步  
 在路径底下新建一个bat文件并命名为`Start.bat`，在文件中输入以下内容：
