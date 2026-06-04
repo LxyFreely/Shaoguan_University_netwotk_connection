@@ -9,7 +9,7 @@
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://python.org)
 [![Stars](https://img.shields.io/github/stars/ZX-RAY1124/Shaoguan_University_netwotk_connection)](https://github.com/ZX-RAY1124/Shaoguan_University_netwotk_connection)
 [![Nodejs version](https://img.shields.io/badge/Nodejs_ver.-21.16.0-yellow)](https://nodejs.org/zh-cn/download)
-[![Used place](https://img.shields.io/badge/only_use_in-Shaoguan_University-brown)]()
+[![Used place](https://img.shields.io/badge/only_use_in-Shaoguan_University-brown)](https://cas.sgu.edu.cn/)
 
 </div>   
 
