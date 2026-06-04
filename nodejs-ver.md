@@ -1,6 +1,6 @@
 <div align="center">
 
-[点我播放bgm](music.163.com/outchain/player?type=2&id=28830412&auto=1&height=32)
+[这里必须有点bgm](https://music.163.com/outchain/player?type=2&id=28830412&auto=1&height=32)
   
 ## 🤩-FASTER-🤩   
 ## 🤯?!HIGHER?!🤯   
