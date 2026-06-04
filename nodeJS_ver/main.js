@@ -418,7 +418,7 @@ async function off_line(host, param){
         });
         waiting = false;
         const NOTIFICATION_TITLE = '消息'
-        const NOTIFICATION_BODY = '下线失败！请检查账号密码是否正确'
+        const NOTIFICATION_BODY = `下线失败！请根据以下提示查找原因：[${confirm_data['message']}]`
         new Notification({
             title: NOTIFICATION_TITLE,
             body:NOTIFICATION_BODY,
