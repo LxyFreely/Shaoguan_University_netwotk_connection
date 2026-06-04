@@ -1,9 +1,12 @@
 const http = require('http');
 const path = require('path');
 const iconPath = path.join(__dirname, 'icon.png');
-const {app, BrowserWindow, Tray, Menu, Notification} = require('electron')
+const {app, BrowserWindow, Tray, Menu, Notification, shell} = require('electron')
 const server = require('./server/server');
 const fs = require('fs');
+const Registry = require('winreg')
+const bootstrap_maker = require('./bootstrap_maker')
+const VER = 'LOCAL';   //开发者修改
 
 require("node:events");
 const post_data = {
@@ -31,19 +34,20 @@ const post_data = {
 let time_index = 0;
 let scheduleInterval = null;
 let waiting = false;
+let on_boot_check = true;
 
 
 
-function make_request(login) {
+async function make_request(login) {
     waiting = true;
-
     const option = {
         host: '2.2.2.2',
         path: '/',
-        method: 'GET'
+        method: 'GET',
+
     }
 
-    const request = http.request(option, (res) => {
+     const request = await http.request(option, (res) => {
         let data = ''
 
         res.on('data', (chunk) => {
@@ -57,19 +61,46 @@ function make_request(login) {
             handle_request(res.statusCode,data,login,location);
         })
         res.on('error', (err) => {
-            console.error(`>> Facing error in getting data, please reported to developer: ${err}`)
+            console.error(`>> Facing error in getting data, please reported to developer: ${err}`);
+            const NOTIFICATION_TITLE = '消息'
+            const NOTIFICATION_BODY = `请求发送失败，请检查网络连接[${err}]`
+            new Notification({
+                title: NOTIFICATION_TITLE,
+                body:NOTIFICATION_BODY,
+                icon:iconPath
+            }).show()
+            http.get("http://localhost:3000/login-finish",(res) => {
+                res.on("data",(chunk) => {
+                    console.log("" + chunk)
+                })
+            });
+            waiting = false;
         })
 
 
     })
-    request.end();
 
     request.on('error', (err) => {
         console.error(err);
-        if (err === Error.ECONNRESET) {
+        if (err) {
             console.error('>> Request fail! Please check your internet connection!');
+            const NOTIFICATION_TITLE = '消息'
+            const NOTIFICATION_BODY = `请求发送失败，请检查网络连接 [${err}]`
+            new Notification({
+                title: NOTIFICATION_TITLE,
+                body:NOTIFICATION_BODY,
+                icon:iconPath
+            }).show()
         }
+        http.get("http://localhost:3000/login-finish",(res) => {
+            res.on("data",(chunk) => {
+                console.log("" + chunk)
+            })
+        });
+        waiting = false;
     })
+    request.end();
+
 }
 
 
@@ -106,7 +137,11 @@ async function handle_request(status_code, data, login, loc) {
         }
         if (login) {
             console.log(`>> You have already login! [code: ${status_code}]`)
-            http.get("http://localhost:3000/login-finish")
+            http.get("http://localhost:3000/login-finish",(res) => {
+                res.on("data",(chunk) => {
+                    console.log("" + chunk)
+                })
+            })
             waiting = false;
             const NOTIFICATION_TITLE = '消息'
             const NOTIFICATION_BODY = '您已成功登录'
@@ -266,7 +301,11 @@ async function final_process(host, incoming_data, url, login){
 
         if (confirm_data['code'] === '0') {
             console.log(`>> Login succeed! [code:${confirm_data['code']}]`);
-            http.get("http://localhost:3000/login-finish");
+            http.get("http://localhost:3000/login-finish",(res) => {
+                res.on("data",(chunk) => {
+                    console.log("" + chunk)
+                })
+            });
             waiting = false;
             const NOTIFICATION_TITLE = '消息'
             const NOTIFICATION_BODY = '登录成功！'
@@ -276,12 +315,16 @@ async function final_process(host, incoming_data, url, login){
                 icon:iconPath
             }).show()
 
-        } else if (confirm_data['code'] === '1') {
+        } else {
             console.error(`>> Login failed! Please check your username or password or report it to developer [message:${confirm_data["message"]}]`)
-            http.get("http://localhost:3000/login-finish");
+            http.get("http://localhost:3000/login-finish",(res) => {
+                res.on("data",(chunk) => {
+                    console.log("" + chunk)
+                })
+            });
             waiting = false;
             const NOTIFICATION_TITLE = '消息'
-            const NOTIFICATION_BODY = '登录失败，请检查网络连接情况并核对账号密码是否正确'
+            const NOTIFICATION_BODY = `登录失败，请核对账号密码是否正确。或根据下面提示判断原因：[${confirm_data["message"]}]`
             new Notification({
                 title: NOTIFICATION_TITLE,
                 body:NOTIFICATION_BODY,
@@ -353,7 +396,11 @@ async function off_line(host, param){
 
     if(confirm_data['code'] === '0'){
         console.log(`>> Logout succeed! [code:${ confirm_data['code']}]`);
-        http.get("http://localhost:3000/logout-finish");
+        http.get("http://localhost:3000/logout-finish",(res) => {
+            res.on("data",(chunk) => {
+                console.log("" + chunk)
+            })
+        });
         waiting = false;
         const NOTIFICATION_TITLE = '消息'
         const NOTIFICATION_BODY = '下线成功！'
@@ -362,9 +409,13 @@ async function off_line(host, param){
             body:NOTIFICATION_BODY,
             icon:iconPath
         }).show()
-    } else if (confirm_data['code'] === '1'){
+    } else {
         console.error(`>> Logout failed! [code:${confirm_data['code']}]`)
-        http.get("http://localhost:3000/logout-finish");
+        http.get("http://localhost:3000/logout-finish",(res) => {
+            res.on("data",(chunk) => {
+                console.log("" +chunk)
+            })
+        });
         waiting = false;
         const NOTIFICATION_TITLE = '消息'
         const NOTIFICATION_BODY = '下线失败！请检查账号密码是否正确'
@@ -386,7 +437,7 @@ function make_form(){    //程序主界面
     let quit = false;
     app.whenReady().then(() => {
         mainWindows = new BrowserWindow({
-            width:800,
+            width:850,
             height:600,
             show: false,
             icon: path.join(__dirname,'icon.png'),
@@ -470,17 +521,78 @@ function on_schedule(){
     const formattedTime = `${hours}:${minutes}:${seconds}`;
 
     if(my_server.time_schedule.plan[time_index].time === formattedTime){
-
-        console.log(`>> On schedule: ${formattedTime}, method:${my_server.time_schedule.plan[time_index].node}`)
-        make_request(() => {
-            if(my_server.time_schedule.plan[time_index].node === 'online'){
-                return true;
-            } else if (my_server.time_schedule.plan[time_index].node === 'offline'){
-                return false;
-            }
-        })
+        console.log(`>> On schedule: ${formattedTime}, method:${my_server.time_schedule.plan[time_index].mode}`)
+        if(my_server.time_schedule.plan[time_index].mode === 'online'){
+            make_request(true);
+        } else if (my_server.time_schedule.plan[time_index].mode === 'offline'){
+            make_request(false);
+        } else{
+        }
+        if(time_index === my_server.time_schedule.plan.length - 1) {
+            time_index = 0;
+        } else {
+            time_index ++;
+        }
     }
 
+}
+
+function set_start(){   //开机自启
+    waiting = true
+    const RegKey  = new Registry({
+            hive: Registry.HKCU,
+            key: '\\Software\\Microsoft\\Windows\\CurrentVersion\\Run',
+
+    })
+    if(VER === "ONLINE") {
+        const boot = new bootstrap_maker();
+        boot.build();
+        RegKey.set('Campus_network_connection_start', Registry.REG_SZ, path.join(__dirname, "start.bat"), (err) => {
+            if (err) {
+                console.log(">> Error in make Registry:", err.message)
+            } else {
+                console.log(">> Set sys_boot success!")
+            }
+        });
+    } else if (VER === "LOCAL") {
+        let dirname = app.getAppPath();
+        dirname = dirname.substring(0,dirname.lastIndexOf('\\resources'))
+        RegKey.set('Campus_network_connection_start', Registry.REG_SZ, path.join(dirname, "校园网自动连接系统.exe"), (err) => {
+            if (err) {
+                console.log(">> Error in make Registry:", err.message)
+            } else {
+                console.log(">> Set sys_boot success!")
+            }
+        });
+    }
+    waiting = false;
+
+}
+
+function set_stop(){
+    waiting = true;
+    const RegKey  = new Registry({
+        hive: Registry.HKCU,
+        key: '\\Software\\Microsoft\\Windows\\CurrentVersion\\Run',
+
+    })
+
+    RegKey.remove("Campus_network_connection_start", (err) => {
+        if (err) {
+            console.log(">> Error in remove Registry:", err.message)
+        } else {
+            console.log(">> Remove sys_boot success!")
+        }
+    })
+    waiting = false;
+}
+
+function search(link){
+    waiting = true;
+    console.log(`>> Recieve ${link}`)
+    shell.openExternal(link).then(() => {console.log(`>> Opening ${link}`)});
+    my_server.on_link = false;
+    waiting = false;
 }
 
 async function start() {
@@ -493,25 +605,33 @@ async function start() {
     }, 2000)
 
 
-
     scheduleInterval = setInterval(() => {
         function listen() {
-            if(!waiting) {
+            if (!waiting) {
                 on_schedule()
                 if (my_server.is_login) {
-                    make_request(true)
+                    make_request(true);
                 } else if (my_server.is_logout) {
-                    make_request(false)
-                }
+                    make_request(false);
 
+                } else if (my_server.boot && on_boot_check){
+                    set_start();
+                    on_boot_check = false;
+                } else if (!my_server.boot && !on_boot_check){
+                    set_stop();
+                    on_boot_check = true;
+                } else if(my_server.on_link && my_server.openlink){
+                    search(my_server.openlink)
+                }
             } else {
+                //console.log(waiting);
             }
+
         }
+
         listen()
 
-    }, 1000)
-
-
+    }, 1000);
 }
 const my_server = new server();
 
