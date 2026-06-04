@@ -46,7 +46,7 @@
 使用之前请保证你的电脑里有Nodejs，如果没有立刻去下载  
 接下来，你要选择一个空文件夹，使用命令行cd到路径，然后输入以下内容:  
 ```commandline
-npm install sgu-cnc
+npm install sgu_cnc
 ```
 等待安装完成后，继续输入
 ```commandline
