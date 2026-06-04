@@ -8,6 +8,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://python.org)
 [![Stars](https://img.shields.io/github/stars/ZX-RAY1124/Shaoguan_University_netwotk_connection)](https://github.com/ZX-RAY1124/Shaoguan_University_netwotk_connection)
+[![Nodejs version](https://img.shields.io/badge/Nodejs_ver.-21.16.0-yellow)](https://nodejs.org/zh-cn/download)
+[![Used place](https://img.shields.io/badge/only_use_in-Shaoguan_University-brown)]()
 
 </div>   
 
@@ -19,7 +21,7 @@
 软件下载地址：   
 [NodeJS版本]   
 安装包：https://github.com/ZX-RAY1124/Shaoguan_University_network_connection/releases/download/npm_version/Setup.1.0.0.exe    
-压缩包：https://github.com/ZX-RAY1124/Shaoguan_University_network_connection/releases/download/npm_version_zip/nodejs.ver1.0.0.winx64.zip   
+压缩包：https://github.com/ZX-RAY1124/Shaoguan_University_network_connection/releases/download/npm_version/ver1.0.0.zip      
 # 🫵应用介绍    
 
 是的，朋友，我知道连接校园网只需要用手点一下按钮就可以了
