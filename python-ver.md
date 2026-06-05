@@ -3,9 +3,9 @@
 ## 🥹路漫漫其修远兮🥹
 ## 🤗吾将上下而求索🤗  
 ## 人生苦短，我用  
-![Python](https://img.shields.io/badge/One_of_the_MOST_popular_useful_powerful_LANGUAGE-Python_3.7+-yellow)  
-![Lxy_freely](https://img.shields.io/badge/A_good_code_%20conductor-LxyFreely-green)
-![ZX_RAYER](https://img.shields.io/badge/Maximize_coder-ZX__RAYER1124-blue)
+[![Python](https://img.shields.io/badge/One_of_the_MOST_popular_useful_powerful_LANGUAGE-Python_3.7+-yellow)](https://python.org)  
+[![Lxy_freely](https://img.shields.io/badge/A_good_code_%20conductor-LxyFreely-green)](https://github.com/LxyFreely)
+[![ZX_RAYER](https://img.shields.io/badge/Maximize_coder-ZX__RAYER1124-blue)](https://github.com/ZX-RAY1124)
 
 </div>
 
