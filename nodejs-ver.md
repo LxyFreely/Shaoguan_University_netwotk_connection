@@ -5,7 +5,7 @@
 ## 🤩-FASTER-🤩   
 ## 🤯?!HIGHER?!🤯   
 ## 😃!!STRONGER THAN BEFORE!!😃
-[![author(https://img.shields.io/badge/Maximize_coder-ZX__RAYER1124-blue)](https://github.com/ZX-RAY1124)
+[![author](https://img.shields.io/badge/Maximize_coder-ZX__RAYER1124-blue)](https://github.com/ZX-RAY1124)
 [![Nodejs](https://img.shields.io/badge/Nodejs_ver.-21.16.0-yellow)](https://nodejs.org/zh-cn/download)
 
 </div>
